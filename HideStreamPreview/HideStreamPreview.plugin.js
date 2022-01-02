@@ -2,7 +2,7 @@
  * @name HideStreamPreview
  * @author blurrpy
  * @description Hide your own stream preview in multistream calls.
- * @version 0.0.5
+ * @version 0.0.6
  * @authorLink https://github.com/danegottwald
  * @website https://github.com/danegottwald
  * @donate https://www.paypal.com/paypalme/danegottwald
@@ -21,7 +21,7 @@ const config = {
             "discord_id": "154401402263699457",
             "github_username": "danegottwald"
         }],
-        "version": "0.0.5",
+        "version": "0.0.6",
         "description": "Hide your own stream preview when screen sharing with multiple users",
         "github": "https://github.com/danegottwald",
         "github_raw": "https://raw.githubusercontent.com/danegottwald/BetterDiscordPlugins/main/HideStreamPreview/HideStreamPreview.plugin.js"
@@ -36,6 +36,16 @@ var settings = {
     "showWhenLowStreams": {
         "title": "Show Own Stream At Low Stream Count (1-2 streams)",
         "description": "Display stream preview until 3 streams are active",
+        "value": true
+    },
+    "setNamesVisibility": {
+        "title": "Show pernamently names of streamers",
+        "description": "Showing names of streamers pernamently, with red color and bigger font. Work only in fullscreen.",
+        "value": true
+    },
+    "changeSizesOfstreams": {
+        "title": "Change sizes of streams",
+        "description": "Change sizes of stream windows, up to 4 streams. Work only in fullscreen",
         "value": true
     }
 }
@@ -115,6 +125,11 @@ module.exports = !global.ZeresPluginLibrary ? class {
         observer(e) {
             if (e.target.tagName == "DIV" && e.target.className.includes("previewWrapper")) {
                 this._hideStreamPreview();
+
+                if (this._isFulscreeen()) {
+                    this._changeSizeOfStreams();
+                    this._setNamesVisibility();
+                }
             }
         }
 
@@ -139,6 +154,56 @@ module.exports = !global.ZeresPluginLibrary ? class {
             }
         }
 
+        _changeSizeOfStreams() {
+            if(!settings["changeSizesOfstreams"]["value"]) {
+                return;
+            }
+
+            let numberOfStreams = document.getElementsByClassName("tile-kezkfV").length - 1;
+            let sizeOfStreamWindow;
+            switch (numberOfStreams) {
+                case 2:
+                case 3:
+                case 4:
+                    sizeOfStreamWindow = window.screen.width / 2;
+                    break;
+                default:
+                    return;
+            }
+            
+            document.getElementsByClassName('listItems-1uJgMC')[0].style.inset = 0;
+
+            [...document.getElementsByClassName("tile-kezkfV")].forEach(s => {
+                if (s.style) {
+                    s.style.display == 'none' ? '' : s.width('' + sizeOfStreamWindow + 'px');
+                }
+            });
+        }
+
+        _setNamesVisibility() {
+            if(!settings["setNamesVisibility"]["value"]) {
+                return;
+            }
+
+
+            [...document.getElementsByClassName("overlayTitle-8IcS01")].forEach(s => {
+                if (s.style) {
+                    s.style.opacity = 1
+                }
+            });
+
+            [...document.getElementsByClassName("overlayTitleText-2mmQzi")].forEach(s => {
+                if (s.style) {
+                    s.style.color = 'red';
+                    s.style.fontSize = '2rem';
+                    s.opacity = 1
+                }
+            });
+        }
+
+        _isFulscreeen() {
+            return window.innerHeight == screen.height;
+        }
     };
 
 })(global.ZeresPluginLibrary.buildPlugin(config));
