@@ -129,6 +129,7 @@ module.exports = !global.ZeresPluginLibrary ? class {
                 if (this._isFulscreeen()) {
                     this._changeSizeOfStreams();
                     this._setNamesVisibility();
+                    this._fix4costreamMash();
                 }
             }
         }
@@ -155,7 +156,7 @@ module.exports = !global.ZeresPluginLibrary ? class {
         }
 
         _changeSizeOfStreams() {
-            if(!settings["changeSizesOfstreams"]["value"]) {
+            if (!settings["changeSizesOfstreams"]["value"]) {
                 return;
             }
 
@@ -165,12 +166,12 @@ module.exports = !global.ZeresPluginLibrary ? class {
                 case 2:
                 case 3:
                 case 4:
-                    sizeOfStreamWindow = window.screen.width / 2;
+                    sizeOfStreamWindow = this.calculateScreenWidthSize();
                     break;
                 default:
                     return;
             }
-            
+
             document.getElementsByClassName('listItems-1uJgMC')[0].style.inset = 0;
 
             [...document.getElementsByClassName("tile-kezkfV")].forEach(s => {
@@ -180,8 +181,33 @@ module.exports = !global.ZeresPluginLibrary ? class {
             });
         }
 
+        /**
+         * Calculation of maximal size of stream windows
+         * @returns width of stream window
+         */
+        calculateScreenWidthSize() {
+            let sizeOfStreamWindowWidth = window.screen.width / 2;
+            let sizeOfStreamWindowHeight = sizeOfStreamWindowWidth / (16 / 9);
+            if (sizeOfStreamWindowHeight <= window.screen.height / 2) {
+                return sizeOfStreamWindowWidth;
+            } 
+            //Non standart resolution (non 16:9)
+            else {
+                return (window.screen.height / 2) * (16 / 9);
+            }
+        }
+
+        _fix4costreamMash() {
+            if(StreamStore.getAllActiveStreams().length == 5){
+                if(Array.from(document.getElementsByClassName('row-22hXsA'))[0].childElementCount == 3){
+                    let h = Array.from(document.getElementsByClassName('tile-kezkfV'));
+                    h[h.length-1].after(h[0]);
+                }  
+            }
+        }
+
         _setNamesVisibility() {
-            if(!settings["setNamesVisibility"]["value"]) {
+            if (!settings["setNamesVisibility"]["value"]) {
                 return;
             }
 
@@ -195,7 +221,7 @@ module.exports = !global.ZeresPluginLibrary ? class {
             [...document.getElementsByClassName("overlayTitleText-2mmQzi")].forEach(s => {
                 if (s.style) {
                     s.style.color = 'red';
-                    s.style.fontSize = '2rem';
+                    s.style.fontSize = '1.3rem';
                     s.opacity = 1
                 }
             });
