@@ -3,4 +3,4 @@
 A (possibly soon to be) collection of Plugins for BetterDiscord
 
 ## Plugins
- - [HideStreamPreview](https://github.com/danegottwald/BetterDiscordPlugins/tree/main/HideStreamPreview)
+ - [MaximalizeStreamPreview](https://github.com/filyyyp/BetterDiscordPlugins/tree/main/MaximalizeStreamPreview)

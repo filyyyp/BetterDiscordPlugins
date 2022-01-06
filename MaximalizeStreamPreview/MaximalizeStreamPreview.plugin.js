@@ -1,12 +1,12 @@
 /**
- * @name HideStreamPreview
- * @author blurrpy
- * @description Hide your own stream preview in multistream calls.
- * @version 0.0.6
- * @authorLink https://github.com/danegottwald
- * @website https://github.com/danegottwald
- * @donate https://www.paypal.com/paypalme/danegottwald
- * @source https://raw.githubusercontent.com/danegottwald/BetterDiscordPlugins/main/HideStreamPreview/HideStreamPreview.plugin.js
+ * @name MaximalizeStreamPreview
+ * @author filyyyp
+ * @description Maximalize stream previews when screen sharing with multiple users
+ * @version 1.0.0
+ * @authorLink https://github.com/filyyyp
+ * @website https://github.com/filyyyp
+ * @donate https://www.paypal.com/paypalme/filyyyp
+ * @source https://raw.githubusercontent.com/filyyyp/BetterDiscordPlugins/main/MaximalizeStreamPreview/MaximalizeStreamPreview.plugin.js
  */
 
 const fs = require("fs");
@@ -15,29 +15,24 @@ const request = require("request");
 
 const config = {
     "info": {
-        "name": "HideStreamPreview",
+        "name": "MaximalizeStreamPreview",
         "authors": [{
-            "name": "blurrpy",
-            "discord_id": "154401402263699457",
-            "github_username": "danegottwald"
+            "name": "filyyyp",
+            "discord_id": "502542771186565120",
+            "github_username": "filyyyp"
         }],
-        "version": "0.0.6",
-        "description": "Hide your own stream preview when screen sharing with multiple users",
-        "github": "https://github.com/danegottwald",
-        "github_raw": "https://raw.githubusercontent.com/danegottwald/BetterDiscordPlugins/main/HideStreamPreview/HideStreamPreview.plugin.js"
+        "version": "1.0.0",
+        "description": "Maximalize stream previews when screen sharing with multiple users.",
+        "github": "https://github.com/filyyyp",
+        "github_raw": "https://raw.githubusercontent.com/filyyyp/BetterDiscordPlugins/main/MaximalizeStreamPreview/MaximalizeStreamPreview.plugin.js"
     },
     "changelog": [
-        { "title": "Updates!", "items": ["Removed deprecated DiscordAPI use", "Bug fixes"] },
+        { "title": "Updates!", "items": ["Release", ""] },
     ],
-    "main": "HideStreamPreview.js"
+    "main": "MaximalizeStreamPreview.js"
 };
 
 var settings = {
-    "showWhenLowStreams": {
-        "title": "Show Own Stream At Low Stream Count (1-2 streams)",
-        "description": "Display stream preview until 3 streams are active",
-        "value": true
-    },
     "setNamesVisibility": {
         "title": "Show pernamently names of streamers",
         "description": "Showing names of streamers pernamently, with red color and bigger font. Work only in fullscreen.",
@@ -69,6 +64,20 @@ module.exports = !global.ZeresPluginLibrary ? class {
                 });
             }
         });
+
+        BdApi.showConfirmationModal("Library plugin is needed",
+        `HideStreamPreview is missing. Please click Download Now to install it.`, {
+        confirmText: "Download",
+        cancelText: "Cancel",
+        onConfirm: () => {
+            request.get("https://raw.githubusercontent.com/danegottwald/BetterDiscordPlugins/main/HideStreamPreview/HideStreamPreview.plugin.js", (error, response, body) => {
+                if (error) {
+                    return electron.shell.openExternal("https://github.com/rauenzi/BDPluginLibrary");
+                }
+                fs.writeFileSync(path.join(BdApi.Plugins.folder, "HideStreamPreview.plugin.js"), body);
+            });
+        }
+    });
     }
 
     start() { }
@@ -83,7 +92,7 @@ module.exports = !global.ZeresPluginLibrary ? class {
         PluginUtilities,
     } = Library;
 
-    return class HideStreamPreview extends Plugin {
+    return class MaximalizeStreamPreview extends Plugin {
         load() {
         }
 
@@ -92,10 +101,10 @@ module.exports = !global.ZeresPluginLibrary ? class {
 
         onStart() {
             // Check for Plugin Updates
-            PluginUpdater.checkForUpdate(this.getName(), this.getVersion(), "https://raw.githubusercontent.com/danegottwald/BetterDiscordPlugins/main/HideStreamPreview/HideStreamPreview.plugin.js");
+            PluginUpdater.checkForUpdate(this.getName(), this.getVersion(), "https://raw.githubusercontent.com/filyyyp/BetterDiscordPlugins/main/MaximalizeStreamPreview/MaximalizeStreamPreview.plugin.js");
 
             // Load Settings from Config on Startup
-            Object.entries(PluginUtilities.loadData("HideStreamPreview", "settings", {})).forEach(([setting, value]) => {
+            Object.entries(PluginUtilities.loadData("MaximalizeStreamPreview", "settings", {})).forEach(([setting, value]) => {
                 settings[setting]["value"] = value
             });
         }
@@ -112,7 +121,7 @@ module.exports = !global.ZeresPluginLibrary ? class {
                         content["title"], content["description"], content["value"],
                         (val) => {
                             settings[setting]["value"] = val;
-                            PluginUtilities.saveSettings("HideStreamPreview", { [setting]: val });
+                            PluginUtilities.saveSettings("MaximalizeStreamPreview", { [setting]: val });
                         }
                     )
                 );
@@ -124,33 +133,11 @@ module.exports = !global.ZeresPluginLibrary ? class {
         // Hide stream preview when the wrapper for the video tiles is targeted
         observer(e) {
             if (e.target.tagName == "DIV" && e.target.className.includes("previewWrapper")) {
-                this._hideStreamPreview();
 
                 if (this._isFulscreeen()) {
                     this._changeSizeOfStreams();
                     this._setNamesVisibility();
                     this._fix4costreamMash();
-                }
-            }
-        }
-
-        _hideStreamPreview() {
-            // Get username/nickname
-            let username = UserNameResolver.getName(SelectedGuildStore.getGuildId(), SelectedChannelStore.getChannelId(), UserStore.getUser(UserInfoStore.getId()));
-
-            // Only hide stream preview if there are three or more streams OR if setting is false
-            if (!settings["showWhenLowStreams"]["value"] || StreamStore.getAllActiveStreams().length >= 3) {
-                // Grab the 'span' element that refers to the current user
-                let element = Array.from(document.getElementsByTagName('span')).find(span =>
-                    (span.textContent == username && span.className.includes("overlayTitleText"))
-                )
-                // Locate the parent div container for the stream tile
-                while (element && !element.classList.contains("tile-kezkfV")) {
-                    element = element.parentElement;
-                }
-                // Hide the element if it exists
-                if (element != null) {
-                    element.style.display = "none";
                 }
             }
         }
