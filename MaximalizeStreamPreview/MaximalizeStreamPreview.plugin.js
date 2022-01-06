@@ -2,7 +2,7 @@
  * @name MaximalizeStreamPreview
  * @author filyyyp
  * @description Maximalize stream previews when screen sharing with multiple users
- * @version 1.0.0
+ * @version 1.0.1
  * @authorLink https://github.com/filyyyp
  * @website https://github.com/filyyyp
  * @donate https://www.paypal.com/paypalme/filyyyp
@@ -21,7 +21,7 @@ const config = {
             "discord_id": "502542771186565120",
             "github_username": "filyyyp"
         }],
-        "version": "1.0.0",
+        "version": "1.0.1",
         "description": "Maximalize stream previews when screen sharing with multiple users.",
         "github": "https://github.com/filyyyp",
         "github_raw": "https://raw.githubusercontent.com/filyyyp/BetterDiscordPlugins/main/MaximalizeStreamPreview/MaximalizeStreamPreview.plugin.js"
@@ -137,7 +137,7 @@ module.exports = !global.ZeresPluginLibrary ? class {
                 if (this._isFulscreeen()) {
                     this._changeSizeOfStreams();
                     this._setNamesVisibility();
-                    this._fix4costreamMash();
+                    this._fixcostreamMash();
                 }
             }
         }
@@ -184,7 +184,14 @@ module.exports = !global.ZeresPluginLibrary ? class {
             }
         }
 
-        _fix4costreamMash() {
+        _fixcostreamMash() {
+            if(StreamStore.getAllActiveStreams().length == 3){
+                if(Array.from(document.getElementsByClassName('row-22hXsA'))[0].childElementCount == 2){
+                    let h = Array.from(document.getElementsByClassName('tile-kezkfV'));
+                    h[h.length-1].after(h[0]);
+                }  
+            }
+
             if(StreamStore.getAllActiveStreams().length == 5){
                 if(Array.from(document.getElementsByClassName('row-22hXsA'))[0].childElementCount == 3){
                     let h = Array.from(document.getElementsByClassName('tile-kezkfV'));
