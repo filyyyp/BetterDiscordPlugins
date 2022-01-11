@@ -2,7 +2,7 @@
  * @name MaximalizeStreamPreview
  * @author filyyyp
  * @description Maximalize stream previews when screen sharing with multiple users
- * @version 1.0.1
+ * @version 1.0.2
  * @authorLink https://github.com/filyyyp
  * @website https://github.com/filyyyp
  * @donate https://www.paypal.com/paypalme/filyyyp
@@ -21,7 +21,7 @@ const config = {
             "discord_id": "502542771186565120",
             "github_username": "filyyyp"
         }],
-        "version": "1.0.1",
+        "version": "1.0.2",
         "description": "Maximalize stream previews when screen sharing with multiple users.",
         "github": "https://github.com/filyyyp",
         "github_raw": "https://raw.githubusercontent.com/filyyyp/BetterDiscordPlugins/main/MaximalizeStreamPreview/MaximalizeStreamPreview.plugin.js"
@@ -65,19 +65,6 @@ module.exports = !global.ZeresPluginLibrary ? class {
             }
         });
 
-        BdApi.showConfirmationModal("Library plugin is needed",
-        `HideStreamPreview is missing. Please click Download Now to install it.`, {
-        confirmText: "Download",
-        cancelText: "Cancel",
-        onConfirm: () => {
-            request.get("https://raw.githubusercontent.com/danegottwald/BetterDiscordPlugins/main/HideStreamPreview/HideStreamPreview.plugin.js", (error, response, body) => {
-                if (error) {
-                    return electron.shell.openExternal("https://github.com/rauenzi/BDPluginLibrary");
-                }
-                fs.writeFileSync(path.join(BdApi.Plugins.folder, "HideStreamPreview.plugin.js"), body);
-            });
-        }
-    });
     }
 
     start() { }
@@ -132,13 +119,11 @@ module.exports = !global.ZeresPluginLibrary ? class {
 
         // Hide stream preview when the wrapper for the video tiles is targeted
         observer(e) {
-            if (e.target.tagName == "DIV" && e.target.className.includes("previewWrapper")) {
-
-                if (this._isFulscreeen()) {
-                    this._changeSizeOfStreams();
-                    this._setNamesVisibility();
-                    this._fixcostreamMash();
-                }
+            if (this._isFulscreeen()) {
+                this._changeSizeOfStreams();
+                this._setNamesVisibility();
+                this._fixcostreamMash();
+                this._hideStreamPreview();
             }
         }
 
@@ -146,8 +131,8 @@ module.exports = !global.ZeresPluginLibrary ? class {
             if (!settings["changeSizesOfstreams"]["value"]) {
                 return;
             }
-
-            let numberOfStreams = document.getElementsByClassName("tile-kezkfV").length - 1;
+            //TODO fix me, cant take elements by generated classname
+            let numberOfStreams = document.getElementsByClassName("tile-3GyaDQ").length - 1;
             let sizeOfStreamWindow;
             switch (numberOfStreams) {
                 case 2:
@@ -158,10 +143,11 @@ module.exports = !global.ZeresPluginLibrary ? class {
                 default:
                     return;
             }
+            //broken  document.getElementsByClassName('listItems-1uJgMC')
+            document.getElementsByClassName('listItems-6eZzQ1')[0].style.inset = 0;
 
-            document.getElementsByClassName('listItems-1uJgMC')[0].style.inset = 0;
-
-            [...document.getElementsByClassName("tile-kezkfV")].forEach(s => {
+            //broken document.getElementsByClassName("tile-kezkfV")
+            [...document.getElementsByClassName("tile-3GyaDQ")].forEach(s => {
                 if (s.style) {
                     s.style.display == 'none' ? '' : s.width('' + sizeOfStreamWindow + 'px');
                 }
@@ -177,7 +163,7 @@ module.exports = !global.ZeresPluginLibrary ? class {
             let sizeOfStreamWindowHeight = sizeOfStreamWindowWidth / (16 / 9);
             if (sizeOfStreamWindowHeight <= window.screen.height / 2) {
                 return sizeOfStreamWindowWidth;
-            } 
+            }
             //Non standart resolution (non 16:9)
             else {
                 return (window.screen.height / 2) * (16 / 9);
@@ -185,18 +171,21 @@ module.exports = !global.ZeresPluginLibrary ? class {
         }
 
         _fixcostreamMash() {
-            if(StreamStore.getAllActiveStreams().length == 3){
-                if(Array.from(document.getElementsByClassName('row-22hXsA'))[0].childElementCount == 2){
-                    let h = Array.from(document.getElementsByClassName('tile-kezkfV'));
-                    h[h.length-1].after(h[0]);
-                }  
+            if (StreamStore.getAllActiveStreams().length == 3) {
+                //broken document.getElementsByClassName('row-22hXsA')
+                if (Array.from(document.getElementsByClassName('row-jreWvj'))[0].childElementCount == 2) {
+                    //broken document.getElementsByClassName('tile-kezkfV')
+                    let h = Array.from(document.getElementsByClassName('tile-3GyaDQ'));
+                    h[h.length - 1].after(h[0]);
+                }
             }
 
-            if(StreamStore.getAllActiveStreams().length == 5){
-                if(Array.from(document.getElementsByClassName('row-22hXsA'))[0].childElementCount == 3){
-                    let h = Array.from(document.getElementsByClassName('tile-kezkfV'));
-                    h[h.length-1].after(h[0]);
-                }  
+            if (StreamStore.getAllActiveStreams().length == 5) {
+                //broken document.getElementsByClassName('row-22hXsA')
+                if (Array.from(document.getElementsByClassName('row-jreWvj'))[0].childElementCount == 3) {
+                    let h = Array.from(document.getElementsByClassName('tile-3GyaDQ'));
+                    h[h.length - 1].after(h[0]);
+                }
             }
         }
 
@@ -205,14 +194,14 @@ module.exports = !global.ZeresPluginLibrary ? class {
                 return;
             }
 
-
-            [...document.getElementsByClassName("overlayTitle-8IcS01")].forEach(s => {
+            //broken document.getElementsByClassName("overlayTitle-8IcS01")
+            [...document.getElementsByClassName("overlayTitle-2efoIF")].forEach(s => {
                 if (s.style) {
                     s.style.opacity = 1
                 }
             });
-
-            [...document.getElementsByClassName("overlayTitleText-2mmQzi")].forEach(s => {
+            //broken document.getElementsByClassName("overlayTitleText-2mmQzi")
+            [...document.getElementsByClassName("overlayTitleText-3xOA3Q")].forEach(s => {
                 if (s.style) {
                     s.style.color = 'red';
                     s.style.fontSize = '1.3rem';
@@ -223,6 +212,29 @@ module.exports = !global.ZeresPluginLibrary ? class {
 
         _isFulscreeen() {
             return window.innerHeight == screen.height;
+        }
+
+
+        // CODE FROM https://raw.githubusercontent.com/danegottwald/BetterDiscordPlugins/main/HideStreamPreview/HideStreamPreview.plugin.js
+        _hideStreamPreview() {
+            // Get username/nickname
+            let username = UserNameResolver.getName(SelectedGuildStore.getGuildId(), SelectedChannelStore.getChannelId(), UserStore.getUser(UserInfoStore.getId()));
+
+            // Only hide stream preview if there are three or more streams OR if setting is false
+            if (!settings["showWhenLowStreams"]["value"] || StreamStore.getAllActiveStreams().length >= 3) {
+                // Grab the 'span' element that refers to the current user
+                let element = Array.from(document.getElementsByTagName('span')).find(span =>
+                    (span.textContent == username && span.className.includes("overlayTitleText"))
+                )
+                // Locate the parent div container for the stream tile
+                while (element && !element.classList.contains("tile-3GyaDQ")) {
+                    element = element.parentElement;
+                }
+                // Hide the element if it exists
+                if (element != null) {
+                    element.style.display = "none";
+                }
+            }
         }
     };
 
