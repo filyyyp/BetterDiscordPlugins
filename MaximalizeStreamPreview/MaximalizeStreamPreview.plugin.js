@@ -2,7 +2,7 @@
  * @name MaximalizeStreamPreview
  * @author filyyyp
  * @description Maximalize stream previews when screen sharing with multiple users
- * @version 1.0.2
+ * @version 1.0.3
  * @authorLink https://github.com/filyyyp
  * @website https://github.com/filyyyp
  * @donate https://www.paypal.com/paypalme/filyyyp
@@ -21,7 +21,7 @@ const config = {
             "discord_id": "502542771186565120",
             "github_username": "filyyyp"
         }],
-        "version": "1.0.2",
+        "version": "1.0.3",
         "description": "Maximalize stream previews when screen sharing with multiple users.",
         "github": "https://github.com/filyyyp",
         "github_raw": "https://raw.githubusercontent.com/filyyyp/BetterDiscordPlugins/main/MaximalizeStreamPreview/MaximalizeStreamPreview.plugin.js"
@@ -123,7 +123,6 @@ module.exports = !global.ZeresPluginLibrary ? class {
                 this._changeSizeOfStreams();
                 this._setNamesVisibility();
                 this._fixcostreamMash();
-                this._hideStreamPreview();
             }
         }
 
@@ -212,29 +211,6 @@ module.exports = !global.ZeresPluginLibrary ? class {
 
         _isFulscreeen() {
             return window.innerHeight == screen.height;
-        }
-
-
-        // CODE FROM https://raw.githubusercontent.com/danegottwald/BetterDiscordPlugins/main/HideStreamPreview/HideStreamPreview.plugin.js
-        _hideStreamPreview() {
-            // Get username/nickname
-            let username = UserNameResolver.getName(SelectedGuildStore.getGuildId(), SelectedChannelStore.getChannelId(), UserStore.getUser(UserInfoStore.getId()));
-
-            // Only hide stream preview if there are three or more streams OR if setting is false
-            if (!settings["showWhenLowStreams"]["value"] || StreamStore.getAllActiveStreams().length >= 3) {
-                // Grab the 'span' element that refers to the current user
-                let element = Array.from(document.getElementsByTagName('span')).find(span =>
-                    (span.textContent == username && span.className.includes("overlayTitleText"))
-                )
-                // Locate the parent div container for the stream tile
-                while (element && !element.classList.contains("tile-3GyaDQ")) {
-                    element = element.parentElement;
-                }
-                // Hide the element if it exists
-                if (element != null) {
-                    element.style.display = "none";
-                }
-            }
         }
     };
 
