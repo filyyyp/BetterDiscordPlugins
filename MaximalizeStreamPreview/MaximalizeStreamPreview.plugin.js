@@ -2,7 +2,7 @@
  * @name MaximalizeStreamPreview
  * @author filyyyp
  * @description Maximalize stream previews when screen sharing with multiple users
- * @version 1.0.3
+ * @version 1.0.4
  * @authorLink https://github.com/filyyyp
  * @website https://github.com/filyyyp
  * @donate https://www.paypal.com/paypalme/filyyyp
@@ -21,7 +21,7 @@ const config = {
             "discord_id": "502542771186565120",
             "github_username": "filyyyp"
         }],
-        "version": "1.0.3",
+        "version": "1.0.4",
         "description": "Maximalize stream previews when screen sharing with multiple users.",
         "github": "https://github.com/filyyyp",
         "github_raw": "https://raw.githubusercontent.com/filyyyp/BetterDiscordPlugins/main/MaximalizeStreamPreview/MaximalizeStreamPreview.plugin.js"
@@ -122,7 +122,6 @@ module.exports = !global.ZeresPluginLibrary ? class {
             if (this._isFulscreeen()) {
                 this._changeSizeOfStreams();
                 this._setNamesVisibility();
-                this._fixcostreamMash();
             }
         }
 
@@ -169,25 +168,6 @@ module.exports = !global.ZeresPluginLibrary ? class {
             }
         }
 
-        _fixcostreamMash() {
-            if (StreamStore.getAllActiveStreams().length == 3) {
-                //broken document.getElementsByClassName('row-22hXsA')
-                if (Array.from(document.getElementsByClassName('row-jreWvj'))[0].childElementCount == 2) {
-                    //broken document.getElementsByClassName('tile-kezkfV')
-                    let h = Array.from(document.getElementsByClassName('tile-3GyaDQ'));
-                    h[h.length - 1].after(h[0]);
-                }
-            }
-
-            if (StreamStore.getAllActiveStreams().length == 5) {
-                //broken document.getElementsByClassName('row-22hXsA')
-                if (Array.from(document.getElementsByClassName('row-jreWvj'))[0].childElementCount == 3) {
-                    let h = Array.from(document.getElementsByClassName('tile-3GyaDQ'));
-                    h[h.length - 1].after(h[0]);
-                }
-            }
-        }
-
         _setNamesVisibility() {
             if (!settings["setNamesVisibility"]["value"]) {
                 return;
@@ -211,6 +191,13 @@ module.exports = !global.ZeresPluginLibrary ? class {
 
         _isFulscreeen() {
             return window.innerHeight == screen.height;
+        }
+
+        _test() {
+            document.querySelectorAll('[class*=overlayTitleText-]')
+            document.querySelectorAll('[class*=overlayTitle-]')
+            document.querySelectorAll('[class*=listItems-]')
+            document.querySelectorAll('[class*=title-]')
         }
     };
 
