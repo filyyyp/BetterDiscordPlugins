@@ -10,7 +10,7 @@ Maximalization of screens works only in fullscreen up to 4 peoples.
 
 
 Features:
-- maximalize stream windows
+- maximalize stream windows (hide black borders)
 - prenamently show name of streamers
 
 <h2>Screen of streams without plugin:</h2>
