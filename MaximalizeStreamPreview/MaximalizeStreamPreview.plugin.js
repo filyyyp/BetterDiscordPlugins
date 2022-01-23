@@ -2,7 +2,7 @@
  * @name MaximalizeStreamPreview
  * @author filyyyp
  * @description Maximalize stream previews when screen sharing with multiple users
- * @version 1.0.5
+ * @version 1.0.6
  * @authorLink https://github.com/filyyyp
  * @website https://github.com/filyyyp
  * @donate https://www.paypal.com/paypalme/filyyyp
@@ -21,7 +21,7 @@ const config = {
             "discord_id": "502542771186565120",
             "github_username": "filyyyp"
         }],
-        "version": "1.0.5",
+        "version": "1.0.6",
         "description": "Maximalize stream previews when screen sharing with multiple users.",
         "github": "https://github.com/filyyyp",
         "github_raw": "https://raw.githubusercontent.com/filyyyp/BetterDiscordPlugins/main/MaximalizeStreamPreview/MaximalizeStreamPreview.plugin.js"
@@ -129,8 +129,7 @@ module.exports = !global.ZeresPluginLibrary ? class {
             if (!settings["changeSizesOfstreams"]["value"]) {
                 return;
             }
-            //TODO fix me, cant take elements by generated classname
-            let numberOfStreams = document.getElementsByClassName("tile-3GyaDQ").length - 1;
+            let numberOfStreams = this.getStreamWindows().length;
             let sizeOfStreamWindow;
             switch (numberOfStreams) {
                 case 2:
@@ -141,11 +140,9 @@ module.exports = !global.ZeresPluginLibrary ? class {
                 default:
                     return;
             }
-            //broken  document.getElementsByClassName('listItems-1uJgMC')
-            document.getElementsByClassName('listItems-6eZzQ1')[0].style.inset = 0;
+            document.querySelectorAll('[class*=listItems-]')[0].style.inset = 0;
 
-            //broken document.getElementsByClassName("tile-kezkfV")
-            [...document.getElementsByClassName("tile-3GyaDQ")].forEach(s => {
+            this.getStreamWindows().forEach(s => {
                 if (s.style) {
                     s.style.display == 'none' ? '' : s.style.width=('' + sizeOfStreamWindow + 'px');
                 }
@@ -173,14 +170,12 @@ module.exports = !global.ZeresPluginLibrary ? class {
                 return;
             }
 
-            //broken document.getElementsByClassName("overlayTitle-8IcS01")
-            [...document.getElementsByClassName("overlayTitle-2efoIF")].forEach(s => {
+            [...document.querySelectorAll('[class*=overlayTitle-]')].forEach(s => {
                 if (s.style) {
                     s.style.opacity = 1
                 }
             });
-            //broken document.getElementsByClassName("overlayTitleText-2mmQzi")
-            [...document.getElementsByClassName("overlayTitleText-3xOA3Q")].forEach(s => {
+            [...document.querySelectorAll('[class*=overlayTitleText-]')].forEach(s => {
                 if (s.style) {
                     s.style.color = 'red';
                     s.style.fontSize = '1.3rem';
@@ -193,11 +188,12 @@ module.exports = !global.ZeresPluginLibrary ? class {
             return window.innerHeight == screen.height;
         }
 
-        _test() {
-            document.querySelectorAll('[class*=overlayTitleText-]')
-            document.querySelectorAll('[class*=overlayTitle-]')
-            document.querySelectorAll('[class*=listItems-]')
-            document.querySelectorAll('[class*=title-]')
+        getStreamWindows() {
+            let listItems = document.querySelectorAll('[class*=listItems-]');
+            if (listItems && listItems.length == 1) {
+                return [...listItems[0].children].map(el => [...el.children]).flat();
+            }
+            return [];
         }
     };
 
