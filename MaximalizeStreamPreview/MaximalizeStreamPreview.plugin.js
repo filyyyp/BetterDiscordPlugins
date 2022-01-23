@@ -2,7 +2,7 @@
  * @name MaximalizeStreamPreview
  * @author filyyyp
  * @description Maximalize stream previews when screen sharing with multiple users
- * @version 1.0.4
+ * @version 1.0.5
  * @authorLink https://github.com/filyyyp
  * @website https://github.com/filyyyp
  * @donate https://www.paypal.com/paypalme/filyyyp
@@ -21,7 +21,7 @@ const config = {
             "discord_id": "502542771186565120",
             "github_username": "filyyyp"
         }],
-        "version": "1.0.4",
+        "version": "1.0.5",
         "description": "Maximalize stream previews when screen sharing with multiple users.",
         "github": "https://github.com/filyyyp",
         "github_raw": "https://raw.githubusercontent.com/filyyyp/BetterDiscordPlugins/main/MaximalizeStreamPreview/MaximalizeStreamPreview.plugin.js"
@@ -147,7 +147,7 @@ module.exports = !global.ZeresPluginLibrary ? class {
             //broken document.getElementsByClassName("tile-kezkfV")
             [...document.getElementsByClassName("tile-3GyaDQ")].forEach(s => {
                 if (s.style) {
-                    s.style.display == 'none' ? '' : s.width('' + sizeOfStreamWindow + 'px');
+                    s.style.display == 'none' ? '' : s.style.width=('' + sizeOfStreamWindow + 'px');
                 }
             });
         }
